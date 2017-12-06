@@ -634,6 +634,63 @@ New file is created when you favorite an existing file. The new file is returned
     + Attributes (Error response)
         + message: File is already in favourites.
 
+## Comments [/v1/files/{slug}/comments{?page,pagesize}]
+
++ Parameters
+    + slug: !8DzBBNAuS (string, required) - Slug from file listing API calls. Slug may change when file is renamed. Old slug will keep working, but new slug will be issued by API calls.
+    + page: 1 (integer, optional) - Paging parameter
+        Default: 1
+    + pagesize: 20 (integer, optional) - Paging parameter - size of returned page
+        Default: 20
+
+### Get comments list [GET]
+
+Fetch list of file comments
+
+
++ Request
+
+    + Headers
+
+            X-Auth-Token: 3284hedgf237ruewhfvgi2378
+            X-Checksum: 93bd5933f956598617c73c2864b00c00
+            X-Timestamp: 1436957691
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Link: </v1/files/{slug}/comments?page=2>;rel=self,</v1/files/{slug}/comments?page=3>;rel=next,</v1/files/{slug}/comments?page=1>;rel=previous
+
+    + Attributes
+        + metadata (object)
+            + run_at: `2014-11-11T08:40:51.620Z`
+            + page: 1
+            + limit: 20
+            + page_count: 12
+            + items_count: 236
+        + items (array[User comment])
+
++ Response 401 (application/json)
+
+    Invalid X-Auth-Token provided , could not authorize your application.
+
+    + Header
+
+            WWW-Authenticate: X-Auth-Token
+
+    + Attributes (Error response)
+        + message: Invalid authorization token.
+
++ Response 404 (application/json)
+
+    Requested response does not exist. Accessing nonexistent page.
+
+    + Attributes (Error response)
+        + message: Requested page index is out of range.
+        + page_count: 1 (number, required)
+        + items_count: 8 (number, required)
+
 # Group Upload
 
 ## Upload batch commit [/v1/upload/batch/{batch_uuid}/commit{?user_token,visibility,is_searchable}]
@@ -1193,3 +1250,16 @@ Accepted languages:
 ## Properties
 + hash: 231de4af3f255e0d6b797327ecc2a7b9 (string, required) - md5 hash to verify downloaded file
 + link: https://dla.uloz.to/ (string, required) - download link
+
+## User comment (object)
+## Properties
++ author (array[Comment author]) - Author of the comment
++ date: 2014-11-11T08:40:51.620Z (string, required) - Time the comment was posted
++ message: `lorem ipsum dolor sit amet` (string, required) - Message body containing allowed html tags
++ rating: 1 (number, required) - Comment rating, can be negative
+
+## Comment author (object)
+## Properties
++ login: `Johndoe` (string, required) - Login name of the user
++ avatar_url: `https://avatar.uloz.to/u/avatar/j/johndoe.jpg` (string, optional) - Avatar image, if 404 Not found, user does not have avatar - you can still use the image returned though, it is a default "blank" avatar image
++ id: 876234 (number, required)
